@@ -9,9 +9,8 @@ dataset = pd.read_csv("IceCreamData.csv")
 X = dataset['Temperature'].values.reshape(-1, 1)
 y = dataset['Revenue'].values
 
-# We need to train the model!0
+# We need to train the model!
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
 
 # Create an instance of the Linear Regression model
 model = LinearRegression()
