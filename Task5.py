@@ -1,23 +1,57 @@
 import requests
 import json
+date = '2023-07-09'
+competition = 'MLS'
+# response = requests.get(f'https://api.sportsdata.io/v4/soccer/scores/json/GamesByDate/{competition}/{date}?key=2081eefbe35448eca50533fee9ee55e6').json()
+# game_ids = []
+# for game in response:
+#     game_ids.append(game["GameId"])
+# beting_markets = requests.get(f"https://api.sportsdata.io/v4/soccer/odds/json/BettingMarketsByGameID/{competition}/{game_ids[0]}?key=2081eefbe35448eca50533fee9ee55e6")
+# print(beting_markets.json()[2])
 
-api_key = '2081eefbe35448eca50533fee9ee55e6'
-base_url = 'https://api.sportsdata.io/v3/'
-sport = 'Soccer'
-league = 'EnglishPremierLeague'
-match_id = 'MATCH_ID'  # Replace with the actual match ID
+pre_game_odds = requests.get(f"https://api.sportsdata.io/v4/soccer/odds/json/GameOddsByDate/{competition}/{date}?key=2081eefbe35448eca50533fee9ee55e6").json()
+response_game_number = 0
+# Team Score Prediction
 
-# Make the API request
-prediction_url = f"https://api.sportsdata.io/v4/soccer/odds/json/BettingEventsBySeason/EPL/2020?key=2081eefbe35448eca50533fee9ee55e6"
-response = requests.get(prediction_url)
-prediction_data = response.json()
-print(prediction_data)
-# home_team = prediction_data['HomeTeam']
-# away_team = prediction_data['AwayTeam']
-# predicted_outcome = prediction_data['Prediction']
-# confidence_level = prediction_data['Confidence']
-# print(f'Next match prediction:')
-# print(f'Home Team: {home_team}')
-# print(f'Away Team: {away_team}')
-# print(f'Predicted Outcome: {predicted_outcome}')
-# print(f'Confidence Level: {confidence_level}')
+home_team_name = pre_game_odds[response_game_number]['HomeTeamName']
+away_team_name = pre_game_odds[response_game_number]['AwayTeamName']
+home_team_score = pre_game_odds[response_game_number]['HomeTeamScore']
+away_team_score = pre_game_odds[response_game_number]['AwayTeamScore']
+#
+# Predict the outcome
+if home_team_score > away_team_score:
+    prediction = f"The next match between {home_team_name} and {away_team_name} is likely to result in a win for the {home_team_name}."
+elif home_team_score < away_team_score:
+    prediction = f"The next match between {home_team_name} and {away_team_name} is likely to result in a win for the {away_team_name}."
+else:
+    prediction = f"The next match between {home_team_name} and {away_team_name} is likely to result in a draw."
+print(prediction)
+
+
+home_wins = 0
+away_wins = 0
+draws = 0
+
+# Iterate through the pregame odds from different sportsbooks
+for odds in pre_game_odds[0]['PregameOdds']:
+    home_money_line = odds['HomeMoneyLine']
+    away_money_line = odds['AwayMoneyLine']
+
+    # Compare the moneyline odds
+    if home_money_line < away_money_line:
+        home_wins += 1
+    elif home_money_line > away_money_line:
+        away_wins += 1
+    else:
+        draws += 1
+
+# Determine the prediction based on the majority opinion
+if home_wins > away_wins and home_wins > draws:
+    prediction = f"The majority of sportsbooks predict a win for the {home_team_name}."
+elif away_wins > home_wins and away_wins > draws:
+    prediction = f"The majority of sportsbooks predict a win for the {away_team_name}."
+else:
+    prediction = f"The majority of sportsbooks predict a draw in the next match between {home_team_name} and {away_team_name}."
+
+# Print the prediction
+print(prediction)
