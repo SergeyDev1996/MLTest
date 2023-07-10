@@ -5,10 +5,12 @@ import requests
 
 def fetch_game_odds(competition, date, api_key):
     sportsdata_api_key = api_key
-    url = f"https://api.sportsdata.io/v4/soccer/odds/json/GameOddsByDate/{competition}/{date}?key={sportsdata_api_key}"
+    url = f"https://api.sportsdata.io/v4/soccer/odds/json/" \
+          f"GameOddsByDate/{competition}/{date}?key={sportsdata_api_key}"
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for unsuccessful requests
+        response.raise_for_status()  # Raise an exception
+        # for unsuccessful requests
         pre_game_odds = response.json()
         return pre_game_odds
     except (requests.RequestException, ValueError) as e:
@@ -48,11 +50,19 @@ def determine_prediction(pre_game_odds):
     predictions = []
 
     if home_wins > away_wins and home_wins > draws:
-        predictions.append(f"In the next match between {home_team_name} and {away_team_name}, the majority of sportsbooks predict a win for the {home_team_name}.")
+        predictions.append(f"In the next match between {home_team_name}"
+                           f" and {away_team_name},"
+                           f" the majority of sportsbooks predict "
+                           f"a win for the {home_team_name}.")
     elif away_wins > home_wins and away_wins > draws:
-        predictions.append(f"In the match between {home_team_name} and {away_team_name}, the majority of sportsbooks predict a win for the {away_team_name}.")
+        predictions.append(f"In the match between {home_team_name} "
+                           f"and {away_team_name}, "
+                           f"the majority of sportsbooks predict"
+                           f" a win for the {away_team_name}.")
     else:
-        predictions.append(f"The majority of sportsbooks predict a draw in the next match between {home_team_name} and {away_team_name}.")
+        predictions.append(f"The majority of sportsbooks predict "
+                           f"a draw in the next match between "
+                           f"{home_team_name} and {away_team_name}.")
 
     return predictions
 

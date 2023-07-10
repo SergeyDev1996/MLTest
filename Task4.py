@@ -5,9 +5,11 @@ import sys
 
 def get_weather(city, api_key):
     try:
-        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+        url = f"https://api.openweathermap.org/data/2.5/weather?q=" \
+              f"{city}&appid={api_key}&units=metric"
         response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for unsuccessful requests
+        response.raise_for_status()  # Raise an exception
+        # for unsuccessful requests
         data = response.json()
         if data["cod"] == "404":
             print(f"City '{city}' not found.")
